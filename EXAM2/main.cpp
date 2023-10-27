@@ -1,6 +1,6 @@
-﻿// Name : Gary Bennet Samuel
+﻿// Name : Dang Tai Bui
 // EXAM 2
-// OCTOBER 29, 2023
+// November 12, 2023
 
 #include <iostream>
 #include "MyCalendar.h"
@@ -12,13 +12,10 @@
 using namespace std;
 
 char menuOption();
-//void setCurrentMonthMenu();
-//void setCurrentDayMenu();
-//void setCurrentCalendarMenu();
-//void setReportandScheduleMenu();
 
 
 int main() {
+    cout << "\n\t" << string(80, char(196));
     MyCalendar calendar;
     char option;
     do {
@@ -56,7 +53,7 @@ int main() {
 }
 
 char menuOption(){
-    cout << "\n\t\nCMPR121 Exam2: MyCalendar - OOP implementations by Prof Q (10/2/2023)";
+    cout << "\n\t\nCMPR121 Exam2: MyCalendar - OOP implementations by Dang Tai Bui";
     cout << "\n\t" << string(80, char(205));
     cout << "\n\tA. Setting Current Year" ;
     cout << "\n\tB. Setting Current Month";
