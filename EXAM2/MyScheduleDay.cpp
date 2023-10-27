@@ -27,6 +27,6 @@ char MyScheduleDay::getType() const
 ostream& operator<<(ostream& out, const MyScheduleDay& obj)
 {
 	out << static_cast<MyUnit>(obj);
-	out << "Type: " << obj.getType() << endl;
+	out << "\nType: " << obj.getType() << endl;
 	return out;
 }

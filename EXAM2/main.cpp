@@ -7,6 +7,7 @@
 #include "MyScheduleDay.h"
 #include <iomanip>  
 #include "input.h"
+#include <ctime>
 
 
 using namespace std;
@@ -39,6 +40,9 @@ int main() {
         case 'd':
         case 'D':
             calendar.setCurrentCalendarMenu();
+        case 'e':
+        case 'E':
+            calendar.setScheduleDateMenu();
         case 'x':
         case 'X':
             exit(0);
@@ -49,6 +53,9 @@ int main() {
         }
     } while (option != 'x' && option != 'X');
     
+
+    
+
     return 0;
 }
 

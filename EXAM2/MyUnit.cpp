@@ -5,14 +5,14 @@
 MyUnit::MyUnit()
 {
 	value = 0;
-	strncpy_s(description, "unknown", 99);
+	strncpy_s(description, "Unschedule", 99);
 }
 
 // Preconditions : 'newValue' is a valid integer
 // Postconditions: sets the 'value' to 'newValue'
 void MyUnit::setValue(const int newValue)
 {
-	value = static_cast<unsigned short>(newValue);
+	value = newValue;
 }
 
 // Preconditions : 'newDescription' is a valid string
@@ -26,7 +26,7 @@ void MyUnit::setDescription(const string newDescription)
 // Postconditions: return the value of 'value'
 int MyUnit::getValue() const
 {
-	return static_cast<int>(value);
+	return value;
 }
 
 // Preconditions : None

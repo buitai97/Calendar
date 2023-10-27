@@ -10,7 +10,6 @@ private:
 public:
 	//Constructor
 	MyUnit();
-	
 	//Setters
 	void setValue(const int newValue);
 	void setDescription(const string newDescription);

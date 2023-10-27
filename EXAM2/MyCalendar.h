@@ -24,6 +24,7 @@ public:
 	void setCurrentMonthMenu();
 	void setCurrentDayMenu();
 	void setCurrentCalendarMenu();
+	void setScheduleDateMenu();
 	void jumpForward(int daysJump);
 	void jumpBackward(int daysJump);
 
@@ -31,7 +32,7 @@ public:
 	int getCurrentYear()const;
 	int getCurrentDay() const;
 	int getCurrentMonth() const;
-	void getCurrentDate() const;
+	void printCurrentDate() const;
 	//overload functions
 	MyCalendar& operator++();
 	MyCalendar operator++(int);
@@ -47,3 +48,4 @@ public:
 bool isLeap(const unsigned short year);
 int getDaysInMonth(const int monthNumber, const int year);
 string getDayInWeek(int day, int month, int year);
+

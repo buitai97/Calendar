@@ -1,9 +1,19 @@
 #include "MyCalendar.h"
 MyCalendar::MyCalendar()
 {
-	currentYear = 0;
-	currentMonth = 0;
-	currentDay = 0;
+    auto currentTime = std::chrono::system_clock::now();
+
+    // Convert the current time point to a time_t
+    std::time_t currentTimeT = std::chrono::system_clock::to_time_t(currentTime);
+
+    // Set the time zone to Pacific Standard Time (PST)
+    std::tm currentTimeStruct;
+    localtime_s(&currentTimeStruct, &currentTimeT);
+
+    // Extract and print date components
+	currentYear = currentTimeStruct.tm_year + 1900;
+	currentMonth = currentTimeStruct.tm_mon + 1;
+	currentDay = currentTimeStruct.tm_mday;
 }
 
 void MyCalendar::setCurrentYear(int newCurrentYear)
@@ -28,15 +38,15 @@ int MyCalendar::getCurrentYear() const
 
 int MyCalendar::getCurrentDay() const
 {
-	return currentMonth;
+	return currentDay;
 }
 
 int MyCalendar::getCurrentMonth() const
 {
-	return currentDay;
+	return currentMonth;
 }
 
-void MyCalendar::getCurrentDate() const
+void MyCalendar::printCurrentDate() const
 {
     string date = "";
     string postfix;
@@ -211,7 +221,7 @@ void MyCalendar::setCurrentCalendarMenu()
 {
     while (true) {
         system("cls");
-        getCurrentDate();
+        printCurrentDate();
         cout << "\n\tMy Calendar Menu";
         cout << "\n";
         cout << "\n\t" << string(60, char(205));
@@ -233,13 +243,13 @@ void MyCalendar::setCurrentCalendarMenu()
         case 1: {
             cout << "\n\tpre - increment : (++)\n\n";
             ++(*this);
-            getCurrentDate();
+            printCurrentDate();
         }
             break;
         case 2: {
             cout << "\n\tpost - increment : (++)\n\n";
             MyCalendar temp = (*this)++;
-            temp.getCurrentDate();
+            temp.printCurrentDate();
         }
             break;
         case 3: {
@@ -252,13 +262,13 @@ void MyCalendar::setCurrentCalendarMenu()
         case -1:{
             cout << "\n\tpre - decrement : (--)\n\n";
             --(*this);
-            getCurrentDate();
+            printCurrentDate();
         }
             break;
         case -2:{
             cout << "\n\tpost - decrement : (--)\n\n";
             MyCalendar temp = (*this)--;
-            temp.getCurrentDate();
+            temp.printCurrentDate();
         }
         case -3: {
             cout << "\n\tEnter an integer (n):";
@@ -272,6 +282,66 @@ void MyCalendar::setCurrentCalendarMenu()
         default:
             cout << "\nInvalid option. Please try again.\n";
         }
+        system("pause");
+    }
+}
+
+void MyCalendar::setScheduleDateMenu()
+{
+    int tempMonth = currentMonth;
+    int tempDay = currentDay;
+    while (true) {
+        system("cls");
+        
+        MyScheduleDay currentScheduleDay;
+        cout << "\n\tmonth       : " << months[tempMonth];
+        cout << "\n\tday         : " << tempDay;
+        cout << "\n\ttype        : " << currentScheduleDay.getType();
+        cout << "\n\tdescription : " << currentScheduleDay.getDescription();
+        cout << "\n";
+        cout << "\n\tSchedule Date";
+        cout << "\n\t" << string(80, char(205));
+        cout << "\n\t1. Schedule a date";
+        cout << "\n\t2. Unschedule a date";
+        cout << "\n\t" << string(80, char(196));
+        cout << "\n\t3. display year schedules";
+        cout << "\n\t4. display month schedules";
+        cout << "\n\t5. display day schedule";
+        cout << "\n\t0. return";
+        cout << "\n\t" << string(80, char(205));
+        cout << "\nOption: ";
+        int option;
+        cin >> option;
+        switch (option)
+        {
+        case 0:
+            return;
+        case 1: {
+            cout << "\nSpecify a month (1...12) : ";
+            cin >> tempMonth;
+            cout << "\nSpecify a day (1...31) :";
+            cin >> tempDay;
+            cout << "\nEnter description: ";
+            string newDescription = "";
+            cin >> newDescription;
+            currentScheduleDay.setDescription(newDescription);
+            char newType;
+            cout << "\nSpecify a type (R-return, A-Awareness H-holiday or P-personal) :";
+            cin >> newType;
+            currentScheduleDay.setType(newType);
+            if (scheduleDays[currentMonth][currentDay].getValue() == 1) {
+                cout << "WARNING: overwrite the existing scheduled date to \"Personal\"";
+            }
+            currentScheduleDay.setValue(1);
+            scheduleDays[tempMonth][tempDay] = currentScheduleDay;
+            cout << "\nSUCCESS: Date has sucessfully been scheduled.";
+            cout << scheduleDays[tempMonth][tempDay];
+        }
+            break;
+        default:
+            break;
+        }
+        cout << "\n";
         system("pause");
     }
 }
@@ -308,12 +378,18 @@ void MyCalendar::jumpBackward(int daysJump)
 
 ostream& operator<<(ostream& out, const MyCalendar& obj)
 {
-    out << "\n\t" << string(1, char(179)) << "Current year : " << obj.currentYear << " - (non - leap) | ";
+    string leap = "";
+    if (isLeap(obj.getCurrentYear())) {
+        leap = " - (leap)";
+    }
+    else
+        leap = " - (non - leap)";
+    out << "\n\t" << string(1, char(179)) << "Current year : " << obj.currentYear << leap << " | ";
     out << "\n\t" << string(80, char(196));
     out << "\n\t| Current month: " << obj.currentMonth << " - October                       |";
     out << "\n\t| Awareness    : Breast Cancer Month                                        |";
     out << "\n\t" << string(80, char(196));
-    out << "\n\t| Current day  : " << obj.currentDay << " - Saturday                      |";
+    out << "\n\t| Current day  : " << obj.currentDay << " - "<< getDayInWeek(obj.currentDay, obj.currentMonth, obj.currentYear) << "                     |";
     out << "\n\t|              : unschedule                                                 |";
     out << "\n\t" << string(80, char(196));
     out << "\n\t| Sunday |  Monday |  Tuesday | Wednesday | Thursday |   Friday  | Saturday |";
@@ -346,7 +422,6 @@ string getDayInWeek(int day, int month, int year) {
         month += 12;
         year--;
     }
-
     int K = year % 100;
     int J = year / 100;
 
