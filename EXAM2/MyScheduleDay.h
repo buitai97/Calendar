@@ -9,8 +9,10 @@ private:
 public:
 	// Constructor
 	MyScheduleDay();
+	~MyScheduleDay();
 	// Setter
 	void setType(const char newType);
+	void reset();
 	// Getter
 	char getType() const;
 	// Overload function

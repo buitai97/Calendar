@@ -6,15 +6,11 @@
 #include "MyCalendar.h"
 #include "MyScheduleDay.h"
 #include <iomanip>  
-#include "input.h"
 #include <ctime>
-
+#include "input.h"
 
 using namespace std;
-
 char menuOption();
-
-
 int main() {
     cout << "\n\t" << string(80, char(196));
     MyCalendar calendar;
@@ -24,26 +20,29 @@ int main() {
         cout << calendar;
         option = menuOption();
         
-        switch (option) {
-        case 'a':
+        switch (toupper(option)) {
         case 'A':
             calendar.setCurrentYearMenu();
             break;
-        case 'b':
         case 'B':
             calendar.setCurrentMonthMenu();
             break;
-        case 'c':
         case 'C':
             calendar.setCurrentDayMenu();
             break;
-        case 'd':
         case 'D':
             calendar.setCurrentCalendarMenu();
-        case 'e':
+            break;
         case 'E':
             calendar.setScheduleDateMenu();
-        case 'x':
+            break;
+        case 'G':
+            calendar.saveToFile();
+            system("pause");
+            break;
+        case 'H':
+            calendar.restoreFromFile();
+            break;
         case 'X':
             exit(0);
             break;
@@ -51,11 +50,8 @@ int main() {
             cout << "\nInvalid option. Please try again.";
             break;
         }
-    } while (option != 'x' && option != 'X');
-    
-
-    
-
+        system("pause");
+    } while (option != 'X');
     return 0;
 }
 

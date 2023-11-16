@@ -2,9 +2,13 @@
 
 // Preconditions: None.
 // Postconditions: Initializes the 'type' member variable to a blank space (' ').
-MyScheduleDay::MyScheduleDay()
+MyScheduleDay::MyScheduleDay(): MyUnit()
 {
 	type = 'U';
+}
+
+MyScheduleDay::~MyScheduleDay()
+{
 }
 
 // Preconditions: 'newType' should be a valid character.
@@ -13,6 +17,13 @@ void MyScheduleDay::setType(const char newType)
 {
 	type = newType;
 }
+
+void MyScheduleDay::reset()
+{
+	MyScheduleDay temp;
+	*this = temp;
+}
+
 
 // Preconditions: None.
 // Postconditions: Returns the current value of the 'type' member variable.
@@ -23,7 +34,6 @@ char MyScheduleDay::getType() const
 
 // Preconditions: None.
 // Postconditions: Writes information about the object.
-
 ostream& operator<<(ostream& out, const MyScheduleDay& obj)
 {
 	out << static_cast<MyUnit>(obj);

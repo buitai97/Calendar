@@ -5,7 +5,7 @@
 MyUnit::MyUnit()
 {
 	value = 0;
-	strncpy_s(description, "Unschedule", 99);
+	strncpy_s(description, "Unscheduled", 99);
 }
 
 // Preconditions : 'newValue' is a valid integer

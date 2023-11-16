@@ -1,19 +1,7 @@
 #include "MyCalendar.h"
 MyCalendar::MyCalendar()
 {
-    auto currentTime = std::chrono::system_clock::now();
-
-    // Convert the current time point to a time_t
-    std::time_t currentTimeT = std::chrono::system_clock::to_time_t(currentTime);
-
-    // Set the time zone to Pacific Standard Time (PST)
-    std::tm currentTimeStruct;
-    localtime_s(&currentTimeStruct, &currentTimeT);
-
-    // Extract and print date components
-	currentYear = currentTimeStruct.tm_year + 1900;
-	currentMonth = currentTimeStruct.tm_mon + 1;
-	currentDay = currentTimeStruct.tm_mday;
+    syncToSystemDate();
 }
 
 void MyCalendar::setCurrentYear(int newCurrentYear)
@@ -58,7 +46,7 @@ void MyCalendar::printCurrentDate() const
         postfix = "rd";
     else
         postfix = "th";
-    cout << "\n\t" << getDayInWeek(currentDay, currentMonth, currentYear) << ", " << months[currentMonth]<< " "<<currentDay << "th, " << currentYear 
+    cout << "\n\t" << MyCalendar::getDayInWeek(currentDay, currentMonth, currentYear) << ", " << months[currentMonth]<< " "<<currentDay << "th, " << currentYear
          << "\n\t" << currentMonth << "/" << currentDay << "/" << currentYear << "\n";
 }
 
@@ -124,24 +112,21 @@ void MyCalendar::setCurrentYearMenu() {
         cout << "\n\t" << string(60, char(205));
 
         int option;
-        cout << "\nOption: ";
-        cin >> option;
+        option = inputInteger("\nOption: ", 0, 1);
 
         switch (option) {
         case 1: {
-            unsigned short newYear = 0;
-            cout << "\nEnter a year (1...9999):";
-            cin >> newYear;
+            int newYear = 0;
+            newYear = inputInteger("\nSpecify a year: 0...9999: ", 0, 9999);
             setCurrentYear(newYear);
             cout << "\n\tCurrent year set to " << newYear << endl;
             break;
         }
         case 0: {
-            // Returning to the main menu
             return;
         }
         default:
-            cout << "\nInvalid option. Please try again.";
+            cout << "\n\tInvalid option. Please try again!";
         }
         system("pause");
     }
@@ -164,15 +149,11 @@ void MyCalendar::setCurrentMonthMenu() {
 
         switch (option) {
         case 1: {
-            unsigned short newMonth = 0;
-            cout << "\nEnter a month (1...12):";
-            cin >> newMonth;
-            setCurrentMonth(newMonth);
-            cout << "\n\tCurrent month set to " << newMonth << endl;
+            currentMonth = inputInteger("\nSpecify a month (1...12) :", 1, 12);
+            cout << "\n\tCurrent month set to " << currentMonth << endl;
             break;
         }
         case 0: {
-            // Returning to the main menu
             return;
         }
         default:
@@ -194,16 +175,11 @@ void MyCalendar::setCurrentDayMenu() {
         cout << "\n\t" << string(60, char(205));
 
         int option;
-        cout << "\nOption: ";
-        cin >> option;
-
+        option = inputInteger("\nOption: ", 0, 1);
         switch (option) {
         case 1: {
-            unsigned short newDay = 0;
-            cout << "\nEnter a Day (1...31):";
-            cin >> newDay;
-            setCurrentMonth(newDay);
-            cout << "\n\tCurrent Day set to " << newDay << endl;
+            currentDay = inputInteger("\nEnter a Day (1...31)",0,31);;
+            cout << "\n\tCurrent Day set to " << currentDay << endl;
             break;
         }
         case 0: {
@@ -236,8 +212,7 @@ void MyCalendar::setCurrentCalendarMenu()
         cout << "\n\t0. Return";
         cout << "\n\t" << string(60, char(205));
         int option;
-        cout << "\n\tOption: ";
-        cin >> option;
+        option = inputInteger("\nOption: ", -3, 3);
         int daysJump = 0;
         switch (option) {
         case 1: {
@@ -253,9 +228,7 @@ void MyCalendar::setCurrentCalendarMenu()
         }
             break;
         case 3: {
-            cout << "\n\tEnter an integer (n):";
-            int daysJump;
-            cin >> daysJump;
+            int daysJump = inputInteger("\n\tEnter an integer (n):", true);
             (*this).jumpForward(daysJump);
         }
             break;
@@ -271,9 +244,7 @@ void MyCalendar::setCurrentCalendarMenu()
             temp.printCurrentDate();
         }
         case -3: {
-            cout << "\n\tEnter an integer (n):";
-            int daysJump;
-            cin >> daysJump;
+            int daysJump = inputInteger("\n\tEnter an integer (n):", true);
             (*this).jumpBackward(daysJump);
         }
             break;
@@ -288,12 +259,11 @@ void MyCalendar::setCurrentCalendarMenu()
 
 void MyCalendar::setScheduleDateMenu()
 {
+    MyScheduleDay currentScheduleDay;
     int tempMonth = currentMonth;
     int tempDay = currentDay;
     while (true) {
         system("cls");
-        
-        MyScheduleDay currentScheduleDay;
         cout << "\n\tmonth       : " << months[tempMonth];
         cout << "\n\tday         : " << tempDay;
         cout << "\n\ttype        : " << currentScheduleDay.getType();
@@ -310,37 +280,81 @@ void MyCalendar::setScheduleDateMenu()
         cout << "\n\t0. return";
         cout << "\n\t" << string(80, char(205));
         cout << "\nOption: ";
-        int option;
-        cin >> option;
-        switch (option)
+        
+        switch (inputInteger("\nEnter an integer: ", 0, 5))
         {
         case 0:
             return;
         case 1: {
-            cout << "\nSpecify a month (1...12) : ";
-            cin >> tempMonth;
-            cout << "\nSpecify a day (1...31) :";
-            cin >> tempDay;
-            cout << "\nEnter description: ";
-            string newDescription = "";
-            cin >> newDescription;
-            currentScheduleDay.setDescription(newDescription);
-            char newType;
-            cout << "\nSpecify a type (R-return, A-Awareness H-holiday or P-personal) :";
-            cin >> newType;
+            tempMonth = inputInteger("\nSpecify a month (1...12) :", 1, 12);
+            tempDay = inputInteger("\nSpecify a day (1...31) :", 1, 31);
+            string tempDescription = inputString("\nEnter description: ", true);    
+            currentScheduleDay.setDescription(tempDescription);
+            string options = "RAHP";
+            char newType = inputChar("\nSpecify a type (R-return, A-Awareness H-holiday or P-personal) :", options);
             currentScheduleDay.setType(newType);
             if (scheduleDays[currentMonth][currentDay].getValue() == 1) {
-                cout << "WARNING: overwrite the existing scheduled date to \"Personal\"";
+                cout << "\nWARNING: overwrite the existing scheduled date to \"Personal\"";
             }
-            currentScheduleDay.setValue(1);
-            scheduleDays[tempMonth][tempDay] = currentScheduleDay;
-            cout << "\nSUCCESS: Date has sucessfully been scheduled.";
-            cout << scheduleDays[tempMonth][tempDay];
+            else
+                currentScheduleDay.setValue(1);
+            scheduleDays[tempMonth-1][tempDay-1] = currentScheduleDay;
+            cout << "\nSUCCESS: Date has successfully been scheduled.";
+            cout << scheduleDays[tempMonth-1][tempDay-1];
+        }
+            break;
+        case 2: {
+            tempMonth = inputInteger("\nSpecify a month (1...12) :", 1, 12);
+            tempDay = inputInteger("\nSpecify a day (1...31) :", 1, 31);
+            scheduleDays[tempMonth-1][tempDay-1] = MyScheduleDay();
+            cout << "\nSUCCESS: Date has successfully been unscheduled.";
+        }
+            break;
+        case 3: {
+            for (int monthIndex = 0; monthIndex < 12;monthIndex++) {
+                cout << '\n' << left <<setw(10)<<months[monthIndex + 1] << ": ";
+                bool isMonthScheduled = false;
+                for (int dayIndex = 0; dayIndex < 31; dayIndex++) {
+                    if (scheduleDays[monthIndex][dayIndex].getType() != 'U') {
+                        cout << '\n' << dayIndex + 1 << " - " << scheduleDays[monthIndex][dayIndex].getDescription();
+                        isMonthScheduled = true;
+                    }                 
+                }
+                if (!isMonthScheduled)
+                    cout << "No scheduled dates for the month.";
+            }
+        }
+              break;
+        case 4: {
+            int inMonth = inputInteger("\nSpecify a month (1...12) :", 1, 12);
+            cout << '\n' << left << setw(10) << months[inMonth] << ": ";
+            bool isMonthScheduled = false;
+            for (int dayIndex = 0; dayIndex < 31; dayIndex++) {
+                if (scheduleDays[inMonth - 1][dayIndex].getType() != 'U') {
+                    cout << '\n' << dayIndex << " - " << scheduleDays[inMonth -1][dayIndex].getDescription();
+                    isMonthScheduled = true;
+                }
+            }
+            if (!isMonthScheduled)
+                cout << "No scheduled dates for the month.";
+        }
+            break;
+        case 5: {
+            int inMonth = inputInteger("\nSpecify a month (1...12) :", 1, 12);
+            int inDay = inputInteger("\nSpecify a day (1...31) :", 1, 31);
+            bool isDayScheduled = false;
+            if (scheduleDays[inMonth - 1][inDay - 1].getType() != 'U') {
+                cout << '\n' << inDay << " - " << scheduleDays[inMonth - 1][inDay - 1].getDescription();
+                isDayScheduled = true;
+            }
+            if (!isDayScheduled)
+                cout << months[inMonth] << " - " << inDay << ": No schedule for the date.";
         }
             break;
         default:
             break;
         }
+        
         cout << "\n";
         system("pause");
     }
@@ -375,40 +389,123 @@ void MyCalendar::jumpBackward(int daysJump)
     }
     currentDay -= daysJump;
 }
+void MyCalendar::saveToFile() const {
+    string filename = to_string(currentYear) + ".DAT";
+    std::ofstream outFile(filename, std::ios::binary);
+    if (!outFile.is_open()) {
+        std::cerr << "Error: Unable to open the file for writing.\n";
+        return;
+    }
 
+    // Save current date and other relevant information to the DAT file
+    outFile.write(reinterpret_cast<const char*>(&currentYear), sizeof(currentYear));
+    outFile.write(reinterpret_cast<const char*>(&currentMonth), sizeof(currentMonth));
+    outFile.write(reinterpret_cast<const char*>(&currentDay), sizeof(currentDay));
+
+    // Save other relevant information to the file if needed
+    outFile.close();
+    std::cout << "Calendar saved to "<<  currentYear << ".DAT file successfully.\n";
+}
+void MyCalendar::restoreFromFile() {
+    std::string filename = inputString("\nEnter the filename to restore from : ", false);
+    std::ifstream inFile(filename, std::ios::binary);
+
+    if (!inFile.is_open()) {
+        std::cerr << "Error: Unable to open the file for reading.\n";
+        return;
+    }
+
+    // Read data from the DAT file and update the calendar
+    inFile.read(reinterpret_cast<char*>(&currentYear), sizeof(currentYear));
+    inFile.read(reinterpret_cast<char*>(&currentMonth), sizeof(currentMonth));
+    inFile.read(reinterpret_cast<char*>(&currentDay), sizeof(currentDay));
+
+    // Read other relevant information from the file if needed
+
+    inFile.close();
+    std::cout << "Calendar restored from "<< filename <<"DAT file successfully.\n";
+}
+
+void MyCalendar::syncToSystemDate() {
+    auto currentTime = std::chrono::system_clock::now();
+    std::time_t currentTimeT = std::chrono::system_clock::to_time_t(currentTime);
+    std::tm currentTimeStruct;
+    localtime_s(&currentTimeStruct, &currentTimeT);
+
+    // Update the currentYear, currentMonth, and currentDay based on the system date
+    currentYear = currentTimeStruct.tm_year + 1900;
+    currentMonth = currentTimeStruct.tm_mon + 1;
+    currentDay = currentTimeStruct.tm_mday;
+}
 ostream& operator<<(ostream& out, const MyCalendar& obj)
 {
+    string daysInWeek[7] = { "Monday", "Tuesday","Wednesday","Thursday", "Friday","Saturday","Sunday" };
+    int dayInWeekNum = MyCalendar::getDayInWeek(obj.currentDay, obj.currentMonth, obj.currentYear);
+    
     string leap = "";
-    if (isLeap(obj.getCurrentYear())) {
+    if (MyCalendar::isLeap(obj.getCurrentYear())) {
         leap = " - (leap)";
     }
     else
         leap = " - (non - leap)";
-    out << "\n\t" << string(1, char(179)) << "Current year : " << obj.currentYear << leap << " | ";
-    out << "\n\t" << string(80, char(196));
-    out << "\n\t| Current month: " << obj.currentMonth << " - October                       |";
-    out << "\n\t| Awareness    : Breast Cancer Month                                        |";
-    out << "\n\t" << string(80, char(196));
-    out << "\n\t| Current day  : " << obj.currentDay << " - "<< getDayInWeek(obj.currentDay, obj.currentMonth, obj.currentYear) << "                     |";
-    out << "\n\t|              : unschedule                                                 |";
-    out << "\n\t" << string(80, char(196));
-    out << "\n\t| Sunday |  Monday |  Tuesday | Wednesday | Thursday |   Friday  | Saturday |";
-    out << "\n\t" << string(80, char(196));
-    out << "\n\t|     1  |      2  |      3   |      4    |      5   |      6    |      7   |";
-    out << "\n\t|     8  |      9  |     10   |     11    |     12   |     13    |     14   |";
-    out << "\n\t|    15  |     16  |     17   |     18    |     19   |     20    |     21   |";
-    out << "\n\t|    22  |     23  |     24   |     25    |     26   |     27    |     28   |";
-    out << "\n\t|    29  |     30  |     31   |     ??    |     ??   |     ??    |     ??   |";
-    out << "\n\t" << string(80, char(196));
+    string awarenessMonthStr = MyCalendar::getAwarenessMonth(obj.getCurrentMonth()) + " Month";
+    string currentMonthStr = to_string(obj.currentMonth) + " - " + MyCalendar::getMonthString(obj.getCurrentMonth());
+    string currentYearStr = to_string(obj.currentYear) + leap;
+    string currentDayStr = to_string(obj.currentDay) + " - " + daysInWeek[dayInWeekNum];
+    out << "\n\t" << char(218) << string(84, char(196)) << char(191);
+    out << "\n\t" << char(179) << left << " Current year : " << setw(21)<< currentYearStr << setw(47) << ' ' << char(179);
+    out << "\n\t" << char(195) << string(84, char(196)) << char(180);
+    out << "\n\t" << char(179) << setw(15) << " Current month: " << setw(21) << currentMonthStr << setw(47) << ' ' << char(179);
+    out << "\n\t" << char(179) << setw(15) << " Awareness    : " << setw(21) << awarenessMonthStr << setw(47)<< ' ' << char(179);
+    out << "\n\t" << char(195) << string(84, char(196)) << char(180);
+    out << "\n\t" << char(179) << setw(15) << " Current day  : " << setw(21) << currentDayStr << setw(47)  << ' ' << char(179);
+    out << "\n\t" << char(179) <<"              : unscheduled" << string(57, ' ') << char(179);
+    out << "\n\t" << char(195) << string(84, char(196)) << char(180);
+    out << "\n\t" << char(179) << format("{:^11}{}{:^11}{}{:^11}{}{:^11}{}{:^11}{}{:^11}{}{:^11}{}",
+        "Sunday",char(179), "Monday", char(179), "Tuesday", char(179), "Wednesday", char(179), "Thursday", char(179), "Friday", char(179), "  Saturday  ", char(179));
+    out << "\n\t" << char(195) << string(84, char(196));
+    int firstDayInMonth = MyCalendar::getDayInWeek(1, obj.getCurrentMonth(), obj.getCurrentYear());
+    int daysInCurrentMonth = MyCalendar::getDaysInMonth(obj.getCurrentMonth(), obj.getCurrentYear());
+    int currentDay = 1;
+    int count = 0;
+    while (currentDay <= daysInCurrentMonth) {
+        for (int i = 0; i < 7; i++) {
+            if ((count % 7) == 0) {
+                out << char(179) << "\n\t" << char(179);
+            }
+            if (count <= firstDayInMonth) {
+                out << setw(12) << " ";
+            }
+            else if (count <= firstDayInMonth + daysInCurrentMonth) {
+                out << internal << setw(7) << currentDay << setw(5) << " ";
+                currentDay++;
+            }
+            else {
+                out << setw(12) << " ";
+            }
+            count++;
+        }
+    }
+    out << char(179);
+    out << "\n\t" << char(195) << string(84, char(196)) << char(180);
     return out;
 }
 
-bool isLeap(const unsigned short year)
+bool MyCalendar::isLeap(const unsigned short year)
 {
     return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0));
 }
-
-int getDaysInMonth(const int monthNumber, const int year)
+string MyCalendar::getMonthString(const int month) {
+    const std::string months[13] = { "unknown", "January", "February", "March",
+                                    "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+    return months[month];
+}
+string MyCalendar::getAwarenessMonth(const int month) {
+    const std::string awanessMonths[13] = { "Unknown", "Thyroid", "Heart Failure", "Multiple Sclerosis", "Oral Cancer", "Mental Health"
+    , "Migrane and Headache", "Juvenile Arthrisis", "Immunization", "Ovarian Cancer", "Breast Cancer", "Lung Cancer", "HIV Aids"};
+    return awanessMonths[month];
+}
+int MyCalendar::getDaysInMonth(const int monthNumber, const int year)
 {
     const int daysInMonth[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     if (monthNumber == 2 && isLeap(year)) {
@@ -416,18 +513,14 @@ int getDaysInMonth(const int monthNumber, const int year)
     }
     return daysInMonth[monthNumber];
 }
-string getDayInWeek(int day, int month, int year) {
-    string daysInWeek[7] = { "Monday", "Tuesday","Wednesday","Thursday", "Friday","Saturday","Sunday" };
+int MyCalendar::getDayInWeek(int day, int month, int year) {
     if (month < 3) {
         month += 12;
         year--;
     }
     int K = year % 100;
     int J = year / 100;
-
     int h = (day + (13 * (month + 1) / 5) + K + (K / 4) + (J / 4) - 2 * J) % 7;
-
-    // Zeller's formula returns 0 for Saturday, 1 for Sunday, 2 for Monday, ..., 6 for Friday
-    int currentDay  = (h + 5) % 7;
-    return daysInWeek[currentDay];
+    int weekDay  = (h + 5) % 7;
+    return weekDay;
 }

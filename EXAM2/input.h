@@ -6,7 +6,7 @@ using namespace std;
 
 //PreCondition: spaces (boolean true or false)
 //PostCondition: returns a string including space character(s) or without space character 
-string inputString(string prompt, bool spaces)
+inline string inputString(string prompt, bool spaces)
 {
 	string input = "";
 
@@ -24,7 +24,7 @@ string inputString(string prompt, bool spaces)
 
 //PreCondition: valid string of options
 //PostCondition: returns an uppercase  of the option (char)
-char inputChar(string prompt, string options)
+inline char inputChar(string prompt, string options)
 {
 	char input;
 	do
@@ -60,7 +60,7 @@ char inputChar(string prompt, string options)
 
 //PreCondition: valid yes (char) or no (char)
 //PostCondition: returns an uppercase  yes (char) or no (char) 
-char inputChar(string prompt, char yes, char no)
+inline char inputChar(string prompt, char yes, char no)
 {
 	char input;
 	do
@@ -86,7 +86,7 @@ char inputChar(string prompt, char yes, char no)
 
 //PreCondition: alphaOrDigit (boolean true or false)
 //PostCondition: returns an alphabet or a digit character
-char inputChar(string prompt, bool alphaOrDigit)
+inline char inputChar(string prompt, bool alphaOrDigit)
 {
 	char input;
 	do
@@ -114,7 +114,7 @@ char inputChar(string prompt, bool alphaOrDigit)
 
 //PreCondition: NA
 //PostCondition: returns any character
-char inputChar(string prompt)
+inline char inputChar(string prompt)
 {
 	char input;
 	do
@@ -136,7 +136,7 @@ char inputChar(string prompt)
 
 //PreCondition: NA
 //PostCondition: returns any integer value
-int inputInteger(string prompt)
+inline int inputInteger(string prompt)
 {
 	int input;
 	do
@@ -158,7 +158,7 @@ int inputInteger(string prompt)
 
 //PreCondition: posNeg (boolean true or false)
 //PostCondition: returns a positive integer value (posNeg = true) or a negative integer value (poseNeg = false)
-int inputInteger(string prompt, bool posNeg)
+inline int inputInteger(string prompt, bool posNeg)
 {
 	int input;
 	do
@@ -184,7 +184,7 @@ int inputInteger(string prompt, bool posNeg)
 
 //PreCondition: start (integer) and greater (boolean true or false)
 //PostCondition: returns an integer value greater than start or lesser than start
-int inputInteger(string prompt, int start, bool greater)
+inline int inputInteger(string prompt, int start, bool greater)
 {
 	int input;
 	do
@@ -210,7 +210,7 @@ int inputInteger(string prompt, int start, bool greater)
 
 //PreCondition: startRange (integer) and endRange (integer)
 //PostCondition: returns an integer value within range (startRannge and endRange)
-int inputInteger(string prompt, int startRange, int endRange)
+inline int inputInteger(string prompt, int startRange, int endRange)
 {
 	int input;
 	do
@@ -234,7 +234,7 @@ int inputInteger(string prompt, int startRange, int endRange)
 
 //PreCondition: NA
 //PostCondition: returns any double value
-double inputDouble(string prompt)
+inline double inputDouble(string prompt)
 {
 	double input;
 	do
@@ -256,7 +256,7 @@ double inputDouble(string prompt)
 
 //PreCondition: posNeg (boolean true or false)
 //PostCondition: returns a positive double value (posNeg = true) or a negative double value (poseNeg = false)
-double inputDouble(string prompt, bool posNeg)
+inline double inputDouble(string prompt, bool posNeg)
 {
 	double input;
 	do
@@ -282,7 +282,7 @@ double inputDouble(string prompt, bool posNeg)
 
 //PreCondition: start(integer) and greater(boolean true or false)
 //PostCondition: returns an integer value greater than start or lesser than start
-double inputDouble(string prompt, double start, bool posNeg)
+inline double inputDouble(string prompt, double start, bool posNeg)
 {
 	double input;
 	do
@@ -308,7 +308,7 @@ double inputDouble(string prompt, double start, bool posNeg)
 
 //PreCondition: startRange (integer) and endRange (integer)
 //PostCondition: returns an integer value within range (startRannge and endRange)
-double inputDouble(string prompt, double startRange, double endRange)
+inline double inputDouble(string prompt, double startRange, double endRange)
 {
 	double input;
 	do
